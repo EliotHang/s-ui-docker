@@ -1,0 +1,44 @@
+name: get s-ui docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "v1.3.11"
+        required: true
+        type: string
+        default: "v1.3.11"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  SOURCE_IMAGE: docker.io/alireza7/s-ui:v1.3.11
+  # 使用 toLowerCase() 函数将仓库路径转为全小写
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/s-ui-docker
+
+jobs:
+  sync:
+    name: 拉取并推送 s-ui 镜像
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 安装 skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      - name: 同步版本镜像
+        run: |
+          skopeo copy --all \
+            --dest-creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
+            docker://${{ env.SOURCE_IMAGE }} \
+            docker://${{ env.IMAGE_NAME }}:${{ inputs.version }}
+
+      - name: 同步 latest 镜像
+        run: |
+          skopeo copy --all \
+            --dest-creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
+            docker://${{ env.SOURCE_IMAGE }} \
+            docker://${{ env.IMAGE_NAME }}:latest
