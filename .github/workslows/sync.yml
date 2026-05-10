@@ -16,7 +16,7 @@ permissions:
 env:
   SOURCE_IMAGE: docker.io/alireza7/s-ui:v1.3.11
   # 使用 toLowerCase() 函数将仓库路径转为全小写
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/s-ui-docker
+  IMAGE_NAME: ghcr.io/eliothang/s-ui-docker
 
 jobs:
   sync:
